@@ -1,0 +1,11 @@
+[Discord]
+token="yourdiscordbottokenhere"
+connection-channel-id=123456767
+
+[Database]
+type="sqlite"
+host="localhost"
+port=3306
+database="cerberus"
+user="cerberususer"
+password="cerberuspassword"
