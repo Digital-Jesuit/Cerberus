@@ -1,4 +1,4 @@
-package me.youhavetrouble.bouncer;
+package me.youhavetrouble.cerberus;
 
 import com.velocitypowered.api.proxy.Player;
 import net.dv8tion.jda.api.JDA;

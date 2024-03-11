@@ -1,4 +1,4 @@
-package me.youhavetrouble.bouncer;
+package me.youhavetrouble.cerberus;
 
 import com.google.inject.Inject;
 import com.moandjiezana.toml.Toml;
@@ -8,9 +8,9 @@ import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
-import me.youhavetrouble.bouncer.listeners.JoinAttemptListener;
-import me.youhavetrouble.bouncer.storage.Database;
-import me.youhavetrouble.bouncer.storage.SqliteDatabase;
+import me.youhavetrouble.cerberus.listeners.JoinAttemptListener;
+import me.youhavetrouble.cerberus.storage.Database;
+import me.youhavetrouble.cerberus.storage.SqliteDatabase;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import java.io.File;
@@ -18,11 +18,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.sql.SQLException;
 import java.util.UUID;
 
 @Plugin(
-        id = "bouncer",
-        name = "Bouncer",
+        id = "cerberus",
+        name = "Cerberus",
         version = "1.0",
         description = "Plugin managing access to the server via discord",
         authors = {"YouHaveTrouble"}
@@ -45,7 +46,7 @@ public class Cerberus {
     }
 
     @Subscribe
-    public void onProxyInitialization(ProxyInitializeEvent event) {
+    public void onProxyInitialization(ProxyInitializeEvent event) throws SQLException {
         this.config = loadConfig();
         Toml databaseData = config.getTable("Database");
         String databaseType = databaseData.getString("type", "sqlite");
@@ -87,7 +88,7 @@ public class Cerberus {
 
     private void initDiscordBot() {
         try {
-            discordBot = new CerberusDiscordBot(this, "");
+            discordBot = new CerberusDiscordBot(this, config.getTable("Discord").getString("token"));
         } catch (InterruptedException e) {
             discordBot = null;
             logger.error("Failed to connect to discord bot.");

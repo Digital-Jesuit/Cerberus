@@ -1,9 +1,9 @@
-package me.youhavetrouble.bouncer.listeners;
+package me.youhavetrouble.cerberus.listeners;
 
 import com.velocitypowered.api.event.ResultedEvent;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.connection.LoginEvent;
-import me.youhavetrouble.bouncer.Cerberus;
+import me.youhavetrouble.cerberus.Cerberus;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 
@@ -41,7 +41,7 @@ public class JoinAttemptListener {
                 .append(Component.newline())
                 .append(Component.text(code, NamedTextColor.RED))
                 .append(Component.newline())
-                .append(Component.text("The code will expire within 5 minutes."));
+                .append(Component.text("The code will expire within 3 minutes."));
 
         event.setResult(ResultedEvent.ComponentResult.denied(disconnectMessage));
 

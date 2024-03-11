@@ -1,6 +1,6 @@
-package me.youhavetrouble.bouncer.storage;
+package me.youhavetrouble.cerberus.storage;
 
-import me.youhavetrouble.bouncer.ConnectionManager;
+import me.youhavetrouble.cerberus.ConnectionManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

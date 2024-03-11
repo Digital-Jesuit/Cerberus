@@ -1,4 +1,4 @@
-package me.youhavetrouble.bouncer;
+package me.youhavetrouble.cerberus;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
@@ -14,8 +14,11 @@ public class ConnectionManager {
     private final Cerberus plugin;
     private final Random random = new SecureRandom();
 
+    private final Cache<String, UUID> connectionUuids = CacheBuilder.newBuilder()
+            .expireAfterWrite(3, TimeUnit.MINUTES)
+            .build();
     private final Cache<UUID, String> connectionCodes = CacheBuilder.newBuilder()
-            .expireAfterWrite(5, TimeUnit.MINUTES)
+            .expireAfterWrite(3, TimeUnit.MINUTES)
             .build();
 
     protected ConnectionManager(Cerberus plugin) {
@@ -33,6 +36,7 @@ public class ConnectionManager {
         if (code != null) return code;
         code = generateCode();
         connectionCodes.put(uuid, code);
+        connectionUuids.put(code, uuid);
         return code;
     }
 
@@ -43,6 +47,7 @@ public class ConnectionManager {
         ConnectionStatus status = plugin.getDatabase().saveConnection(minecraftId, discordId);
         if (!ConnectionStatus.SUCCESS.equals(status)) return status;
         connectionCodes.invalidate(minecraftId);
+        connectionUuids.invalidate(code);
         return status;
     }
 

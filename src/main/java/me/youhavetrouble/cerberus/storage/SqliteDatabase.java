@@ -1,17 +1,16 @@
-package me.youhavetrouble.bouncer.storage;
+package me.youhavetrouble.cerberus.storage;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import me.youhavetrouble.bouncer.ConnectionManager;
+import me.youhavetrouble.cerberus.ConnectionManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
+import org.sqlite.JDBC;
 
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.io.File;
+import java.sql.*;
 import java.util.UUID;
 
 public class SqliteDatabase implements Database {
@@ -19,8 +18,13 @@ public class SqliteDatabase implements Database {
     private final Logger logger;
     private final DataSource dataSource;
 
-    public SqliteDatabase(Logger logger) {
+    public SqliteDatabase(Logger logger) throws SQLException {
         this.logger = logger;
+        DriverManager.registerDriver(new JDBC());
+        File dbFile = new File("plugins/cerberus");
+        if (!dbFile.exists()) {
+            dbFile.mkdir();
+        }
         HikariConfig hikariConfig = new HikariConfig();
         hikariConfig.setJdbcUrl("jdbc:sqlite:plugins/cerberus/data.db");
         hikariConfig.setMaximumPoolSize(1); // sqlite is not exactly thread safe
@@ -77,7 +81,7 @@ public class SqliteDatabase implements Database {
             PreparedStatement statement = connection.prepareStatement("select minecraft_id from connections where discord_id = ?;");
             statement.setLong(1, discordSnowflake);
             ResultSet result = statement.executeQuery();
-            String stringId = result.getString("discord_id");
+            String stringId = result.getString("minecraft_id");
             return UUID.fromString(stringId);
         } catch (SQLException|IllegalArgumentException e) {
             return null;
