@@ -69,7 +69,9 @@ public class SqliteDatabase implements Database {
             PreparedStatement statement = connection.prepareStatement("select discord_id from connections where minecraft_id = ?;");
             statement.setString(1, minecraftUuid.toString());
             ResultSet result = statement.executeQuery();
-            return result.getLong("discord_id");
+            long id = result.getLong("discord_id");
+            if (id == 0) return null;
+            return id;
         } catch (SQLException e) {
             return null;
         }
@@ -82,6 +84,7 @@ public class SqliteDatabase implements Database {
             statement.setLong(1, discordSnowflake);
             ResultSet result = statement.executeQuery();
             String stringId = result.getString("minecraft_id");
+            if (stringId == null) return null;
             return UUID.fromString(stringId);
         } catch (SQLException|IllegalArgumentException e) {
             return null;

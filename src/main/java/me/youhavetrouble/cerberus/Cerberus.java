@@ -2,6 +2,9 @@ package me.youhavetrouble.cerberus;
 
 import com.google.inject.Inject;
 import com.moandjiezana.toml.Toml;
+import com.velocitypowered.api.event.ResultedEvent;
+import com.velocitypowered.api.event.connection.LoginEvent;
+import com.velocitypowered.api.event.connection.PostLoginEvent;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.plugin.Plugin;
@@ -11,6 +14,8 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import me.youhavetrouble.cerberus.listeners.JoinAttemptListener;
 import me.youhavetrouble.cerberus.storage.Database;
 import me.youhavetrouble.cerberus.storage.SqliteDatabase;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import java.io.File;
@@ -68,7 +73,8 @@ public class Cerberus {
 
     public boolean canJoin(Player player) {
         UUID uuid = player.getUniqueId();
-        return connectionManager.isConnected(uuid);
+        if (!connectionManager.isConnected(uuid)) return false;
+        return discordBot.isPlayerOnCommonDiscordServer(player);
     }
 
     @Nullable
@@ -88,7 +94,7 @@ public class Cerberus {
 
     private void initDiscordBot() {
         try {
-            discordBot = new CerberusDiscordBot(this, config.getTable("Discord").getString("token"));
+            discordBot = new CerberusDiscordBot(this);
         } catch (InterruptedException e) {
             discordBot = null;
             logger.error("Failed to connect to discord bot.");
@@ -96,7 +102,7 @@ public class Cerberus {
     }
 
     @Nullable
-    public Long getDiscordChannelId() {
+    protected Long getDiscordChannelId() {
         return config.getTable("Discord").getLong("connection-channel-id", null);
     }
 
@@ -121,4 +127,11 @@ public class Cerberus {
         return new Toml().read(file);
     }
 
+    protected String getDiscordToken() {
+        return config.getTable("Discord").getString("token");
+    }
+
+    public Logger getLogger() {
+        return logger;
+    }
 }

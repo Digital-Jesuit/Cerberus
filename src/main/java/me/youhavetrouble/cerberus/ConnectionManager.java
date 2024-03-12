@@ -3,6 +3,7 @@ package me.youhavetrouble.cerberus;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.security.SecureRandom;
 import java.util.Random;
@@ -35,6 +36,12 @@ public class ConnectionManager {
         String code = connectionCodes.getIfPresent(uuid);
         if (code != null) return code;
         code = generateCode();
+
+        // safety measure to not duplicate codes
+        while (connectionUuids.asMap().containsKey(code)) {
+            code = generateCode();
+        }
+
         connectionCodes.put(uuid, code);
         connectionUuids.put(code, uuid);
         return code;
@@ -49,6 +56,11 @@ public class ConnectionManager {
         connectionCodes.invalidate(minecraftId);
         connectionUuids.invalidate(code);
         return status;
+    }
+
+    @Nullable
+    public UUID getUuidFromCode(@NotNull String code) {
+        return connectionUuids.getIfPresent(code);
     }
 
     public boolean isConnected(@NotNull UUID id) {
@@ -75,7 +87,7 @@ public class ConnectionManager {
         return builder.toString();
     }
 
-    public static enum ConnectionStatus {
+    public enum ConnectionStatus {
         SUCCESS,
         INVALID_CODE,
         DUPLICATE_MINECRAFT_ID,
