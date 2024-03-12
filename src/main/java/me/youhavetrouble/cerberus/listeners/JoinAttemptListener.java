@@ -41,11 +41,9 @@ public class JoinAttemptListener {
                 .append(Component.newline())
                 .append(Component.text(code, NamedTextColor.RED))
                 .append(Component.newline())
+                .append(Component.newline())
                 .append(Component.text("The code will expire within 3 minutes."));
-
         event.setResult(ResultedEvent.ComponentResult.denied(disconnectMessage));
-
-
     }
 
 }

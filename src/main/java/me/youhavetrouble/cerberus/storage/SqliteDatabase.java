@@ -7,7 +7,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.sqlite.JDBC;
-
 import javax.sql.DataSource;
 import java.io.File;
 import java.sql.*;

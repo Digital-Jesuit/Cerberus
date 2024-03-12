@@ -11,9 +11,7 @@ import net.dv8tion.jda.api.interactions.components.text.TextInputStyle;
 import net.dv8tion.jda.api.interactions.modals.Modal;
 import net.dv8tion.jda.api.interactions.modals.ModalMapping;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.UUID;
-
 
 public class DiscordBotListener extends ListenerAdapter {
 
@@ -28,7 +26,7 @@ public class DiscordBotListener extends ListenerAdapter {
             .addActionRow(codeInput)
             .build();
 
-    private Cerberus plugin;
+    private final Cerberus plugin;
 
     public DiscordBotListener(Cerberus plugin) {
         this.plugin = plugin;
@@ -41,14 +39,17 @@ public class DiscordBotListener extends ListenerAdapter {
         long userId = user.getIdLong();
         ConnectionManager connectionManager = plugin.getConnectionManager();
         if (connectionManager == null) {
-            event.reply("Internal error occured. Try again later!").queue();
+            event.deferReply(true).queue((interactionHook -> {
+                interactionHook.editOriginal("Internal error occured. Try again later!").queue();
+            }));
             return;
         }
         if (connectionManager.isConnected(userId)) {
-            event.reply("Your minecraft account is already connected!").queue();
+            event.deferReply(true).queue(interactionHook -> {
+                interactionHook.editOriginal("Your minecraft account is already connected!").queue();
+            });
             return;
         }
-
         event.replyModal(modal).queue();
     }
 
@@ -58,7 +59,9 @@ public class DiscordBotListener extends ListenerAdapter {
         if (event.getValues().isEmpty()) return;
         ConnectionManager connectionManager = plugin.getConnectionManager();
         if (connectionManager == null) {
-            event.reply("Internal error occured. Try again later!").queue();
+            event.deferReply(true).queue(interactionHook -> {
+                interactionHook.editOriginal("Internal error occured. Try again later!").queue();
+            });
             return;
         }
         ModalMapping mapping = event.getValues().get(0);

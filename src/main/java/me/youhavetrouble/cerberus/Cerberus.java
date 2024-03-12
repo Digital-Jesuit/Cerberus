@@ -2,9 +2,6 @@ package me.youhavetrouble.cerberus;
 
 import com.google.inject.Inject;
 import com.moandjiezana.toml.Toml;
-import com.velocitypowered.api.event.ResultedEvent;
-import com.velocitypowered.api.event.connection.LoginEvent;
-import com.velocitypowered.api.event.connection.PostLoginEvent;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.plugin.Plugin;
@@ -14,8 +11,6 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import me.youhavetrouble.cerberus.listeners.JoinAttemptListener;
 import me.youhavetrouble.cerberus.storage.Database;
 import me.youhavetrouble.cerberus.storage.SqliteDatabase;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import java.io.File;
@@ -75,11 +70,6 @@ public class Cerberus {
         UUID uuid = player.getUniqueId();
         if (!connectionManager.isConnected(uuid)) return false;
         return discordBot.isPlayerOnCommonDiscordServer(player);
-    }
-
-    @Nullable
-    public CerberusDiscordBot getDiscordBot() {
-        return discordBot;
     }
 
     @Nullable

@@ -7,8 +7,9 @@ import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import net.dv8tion.jda.api.utils.cache.CacheFlag;
-import org.jetbrains.annotations.Nullable;
+import net.dv8tion.jda.api.requests.GatewayIntent;
+
+import javax.annotation.Nullable;
 
 public class CerberusDiscordBot extends ListenerAdapter {
 
@@ -17,11 +18,16 @@ public class CerberusDiscordBot extends ListenerAdapter {
 
     protected CerberusDiscordBot(Cerberus plugin) throws InterruptedException {
         this.plugin = plugin;
-        JDABuilder builder = JDABuilder.createDefault(plugin.getDiscordToken())
-                .disableCache(CacheFlag.STICKER, CacheFlag.VOICE_STATE, CacheFlag.SCHEDULED_EVENTS, CacheFlag.FORUM_TAGS)
-                .addEventListeners(new DiscordBotListener(plugin));
-        bot = builder.build();
-        bot.setAutoReconnect(true);
+        bot =  JDABuilder.createDefault(plugin.getDiscordToken())
+                .enableIntents(
+                        GatewayIntent.GUILD_MEMBERS,
+                        GatewayIntent.GUILD_PRESENCES,
+                        GatewayIntent.DIRECT_MESSAGES,
+                        GatewayIntent.GUILD_MESSAGES
+                )
+                .setAutoReconnect(true)
+                .addEventListeners(new DiscordBotListener(plugin))
+                .build();
         bot.getPresence().setPresence(OnlineStatus.ONLINE, Activity.customStatus("Gatekeeping"));
         bot.awaitReady();
         createLinkingCommand();
@@ -29,7 +35,6 @@ public class CerberusDiscordBot extends ListenerAdapter {
 
     /**
      * Checks if a player is on the common Discord server.
-     *
      * @param player The player to check.
      * @return true if the player is on the common Discord server, false otherwise.
      */
@@ -43,7 +48,6 @@ public class CerberusDiscordBot extends ListenerAdapter {
 
     /**
      * Checks if a user is on a common Discord server.
-     *
      * @param user The user to check.
      * @return True if the user is on a common Discord server, false otherwise.
      */
@@ -57,7 +61,6 @@ public class CerberusDiscordBot extends ListenerAdapter {
                 "link-minecraft",
                 "Allows to link discord account to minecraft one").queue()
         );
-
     }
 
 }
