@@ -36,7 +36,7 @@ public class Cerberus {
     private CerberusDiscordBot discordBot;
     private Database database;
     private final Path configFolder;
-    private Toml config;
+    private CerberusConfig config;
 
     private ConnectionManager connectionManager;
     @Inject
@@ -47,9 +47,8 @@ public class Cerberus {
 
     @Subscribe
     public void onProxyInitialization(ProxyInitializeEvent event) throws SQLException {
-        this.config = loadConfig();
-        Toml databaseData = config.getTable("Database");
-        String databaseType = databaseData.getString("type", "sqlite");
+        reloadConfig();
+        String databaseType = config.databaseType;
         switch (databaseType) {
             case "sqlite":
                 this.database = new SqliteDatabase(logger);
@@ -62,6 +61,7 @@ public class Cerberus {
                 this.database = new SqliteDatabase(logger);
         }
         initDiscordBot();
+        discordBot.setStatus(config.status);
         this.connectionManager = new ConnectionManager(this);
         server.getEventManager().register(this, new JoinAttemptListener(this));
     }
@@ -91,12 +91,7 @@ public class Cerberus {
         }
     }
 
-    @Nullable
-    protected Long getDiscordChannelId() {
-        return config.getTable("Discord").getLong("connection-channel-id", null);
-    }
-
-    protected Toml loadConfig() {
+    protected void reloadConfig() {
         File folder = configFolder.toFile();
         File file = new File(folder, "config.toml");
         if (!file.getParentFile().exists()) {
@@ -111,14 +106,16 @@ public class Cerberus {
                 }
             } catch (IOException exception) {
                 exception.printStackTrace();
-                return null;
+                return;
             }
         }
-        return new Toml().read(file);
+        config = new CerberusConfig(new Toml().read(file));
+        if (discordBot == null) return;
+        discordBot.setStatus(config.status);
     }
 
-    protected String getDiscordToken() {
-        return config.getTable("Discord").getString("token");
+    public CerberusConfig getConfig() {
+        return config;
     }
 
     public Logger getLogger() {

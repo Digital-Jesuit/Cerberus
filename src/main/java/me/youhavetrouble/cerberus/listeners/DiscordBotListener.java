@@ -40,13 +40,13 @@ public class DiscordBotListener extends ListenerAdapter {
         ConnectionManager connectionManager = plugin.getConnectionManager();
         if (connectionManager == null) {
             event.deferReply(true).queue((interactionHook -> {
-                interactionHook.editOriginal("Internal error occured. Try again later!").queue();
+                interactionHook.editOriginal(plugin.getConfig().otherErrorDiscord).queue();
             }));
             return;
         }
         if (connectionManager.isConnected(userId)) {
             event.deferReply(true).queue(interactionHook -> {
-                interactionHook.editOriginal("Your minecraft account is already connected!").queue();
+                interactionHook.editOriginal(plugin.getConfig().alreadyConnected).queue();
             });
             return;
         }
@@ -60,7 +60,7 @@ public class DiscordBotListener extends ListenerAdapter {
         ConnectionManager connectionManager = plugin.getConnectionManager();
         if (connectionManager == null) {
             event.deferReply(true).queue(interactionHook -> {
-                interactionHook.editOriginal("Internal error occured. Try again later!").queue();
+                interactionHook.editOriginal(plugin.getConfig().otherErrorDiscord).queue();
             });
             return;
         }
@@ -69,16 +69,16 @@ public class DiscordBotListener extends ListenerAdapter {
         UUID uuid = connectionManager.getUuidFromCode(code);
         event.deferReply(true).queue(interactionHook -> {
             if (uuid == null) {
-                interactionHook.editOriginal("Invalid code!").queue();
+                interactionHook.editOriginal(plugin.getConfig().invalidCode).queue();
                 return;
             }
             ConnectionManager.ConnectionStatus status = connectionManager.tryConnectAccounts(uuid, event.getUser().getIdLong(), code);
             switch (status) {
-                case SUCCESS -> interactionHook.editOriginal("Account connected! Now you can log in and play!").queue();
-                case INVALID_CODE -> interactionHook.editOriginal("Invalid code!").queue();
-                case DUPLICATE_MINECRAFT_ID -> interactionHook.editOriginal("Minecraft account already connected!").queue();
-                case DUPLICATE_DISCORD_ID -> interactionHook.editOriginal("This discord account is already connected to another account!").queue();
-                case OTHER_ERROR -> interactionHook.editOriginal("Internal error occured. Try again later!").queue();
+                case SUCCESS -> interactionHook.editOriginal(plugin.getConfig().accountConnected).queue();
+                case INVALID_CODE -> interactionHook.editOriginal(plugin.getConfig().invalidCode).queue();
+                case DUPLICATE_MINECRAFT_ID -> interactionHook.editOriginal(plugin.getConfig().duplicateMinecraftId).queue();
+                case DUPLICATE_DISCORD_ID -> interactionHook.editOriginal(plugin.getConfig().duplicateDiscordId).queue();
+                case OTHER_ERROR -> interactionHook.editOriginal(plugin.getConfig().otherErrorDiscord).queue();
             }
         });
 

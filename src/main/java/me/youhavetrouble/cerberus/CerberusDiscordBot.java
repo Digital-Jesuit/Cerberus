@@ -18,7 +18,7 @@ public class CerberusDiscordBot extends ListenerAdapter {
 
     protected CerberusDiscordBot(Cerberus plugin) throws InterruptedException {
         this.plugin = plugin;
-        bot =  JDABuilder.createDefault(plugin.getDiscordToken())
+        bot =  JDABuilder.createDefault(plugin.getConfig().botToken)
                 .enableIntents(
                         GatewayIntent.GUILD_MEMBERS,
                         GatewayIntent.GUILD_PRESENCES,
@@ -28,7 +28,6 @@ public class CerberusDiscordBot extends ListenerAdapter {
                 .setAutoReconnect(true)
                 .addEventListeners(new DiscordBotListener(plugin))
                 .build();
-        bot.getPresence().setPresence(OnlineStatus.ONLINE, Activity.customStatus("Gatekeeping"));
         bot.awaitReady();
         createLinkingCommand();
     }
@@ -59,8 +58,13 @@ public class CerberusDiscordBot extends ListenerAdapter {
     public void createLinkingCommand() {
         bot.getGuilds().forEach(guild -> guild.upsertCommand(
                 "link-minecraft",
-                "Allows to link discord account to minecraft one").queue()
+                plugin.getConfig().linkingCommandDescription).queue()
         );
+    }
+
+    public void setStatus(String status) {
+        if (status == null) return;
+        bot.getPresence().setPresence(OnlineStatus.ONLINE, Activity.customStatus(status));
     }
 
 }

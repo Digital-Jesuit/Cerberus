@@ -1,6 +1,7 @@
 [Discord]
 token="yourdiscordbottokenhere"
 connection-channel-id=123456767
+status="Gatekeeping"
 
 [Database]
 type="sqlite"
@@ -9,3 +10,21 @@ port=3306
 database="cerberus"
 user="cerberususer"
 password="cerberuspassword"
+
+[Messages]
+linking-command-description="Allows to link discord account to minecraft one"
+error-other-minecraft="Error occured. Try again later"
+error-other-discord="Error occured. Try again later"
+linking-kick-reason='''\
+  You need to connect your discord account to play!<newline> \
+  Join <link to discord here> and use our bot to enter<newline> \
+  <newline> \
+  <red>%code%</red><newline> \
+  <newline> \
+  The code will expire within 3 minutes. \
+'''
+account-connected="Account connected! Now you can log in and play!"
+invalid-code="Invalid code!"
+duplicate-minecraft-id="Minecraft account already connected!"
+duplicate-discord-id="This discord account is already connected to another account!"
+already-connected="Your minecraft account is already connected!"
