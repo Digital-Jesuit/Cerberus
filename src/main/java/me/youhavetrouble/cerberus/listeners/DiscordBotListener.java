@@ -11,6 +11,7 @@ import net.dv8tion.jda.api.interactions.components.text.TextInputStyle;
 import net.dv8tion.jda.api.interactions.modals.Modal;
 import net.dv8tion.jda.api.interactions.modals.ModalMapping;
 import org.jetbrains.annotations.NotNull;
+
 import java.util.UUID;
 
 public class DiscordBotListener extends ListenerAdapter {
@@ -76,8 +77,10 @@ public class DiscordBotListener extends ListenerAdapter {
             switch (status) {
                 case SUCCESS -> interactionHook.editOriginal(plugin.getConfig().accountConnected).queue();
                 case INVALID_CODE -> interactionHook.editOriginal(plugin.getConfig().invalidCode).queue();
-                case DUPLICATE_MINECRAFT_ID -> interactionHook.editOriginal(plugin.getConfig().duplicateMinecraftId).queue();
-                case DUPLICATE_DISCORD_ID -> interactionHook.editOriginal(plugin.getConfig().duplicateDiscordId).queue();
+                case DUPLICATE_MINECRAFT_ID ->
+                        interactionHook.editOriginal(plugin.getConfig().duplicateMinecraftId).queue();
+                case DUPLICATE_DISCORD_ID ->
+                        interactionHook.editOriginal(plugin.getConfig().duplicateDiscordId).queue();
                 case OTHER_ERROR -> interactionHook.editOriginal(plugin.getConfig().otherErrorDiscord).queue();
             }
         });
