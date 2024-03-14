@@ -8,6 +8,7 @@ import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
+import me.youhavetrouble.cerberus.commands.CerberusCommand;
 import me.youhavetrouble.cerberus.listeners.JoinAttemptListener;
 import me.youhavetrouble.cerberus.storage.Database;
 import me.youhavetrouble.cerberus.storage.SqliteDatabase;
@@ -43,11 +44,12 @@ public class Cerberus {
     public Cerberus(ProxyServer server, @DataDirectory final Path configFolder) {
         this.server = server;
         this.configFolder = configFolder;
+        server.getCommandManager().register(CerberusCommand.createCerberusCommand(this));
     }
 
     @Subscribe
     public void onProxyInitialization(ProxyInitializeEvent event) throws SQLException {
-        reloadConfig();
+        reloadPlugin();
         String databaseType = config.databaseType;
         switch (databaseType) {
             case "sqlite":
@@ -91,7 +93,7 @@ public class Cerberus {
         }
     }
 
-    protected void reloadConfig() {
+    public void reloadPlugin() {
         File folder = configFolder.toFile();
         File file = new File(folder, "config.toml");
         if (!file.getParentFile().exists()) {
@@ -112,6 +114,8 @@ public class Cerberus {
         config = new CerberusConfig(new Toml().read(file));
         if (discordBot == null) return;
         discordBot.setStatus(config.status);
+        discordBot.createLinkingCommand();
+        discordBot.sendLinkingMessage();
     }
 
     public CerberusConfig getConfig() {
@@ -120,5 +124,13 @@ public class Cerberus {
 
     public Logger getLogger() {
         return logger;
+    }
+
+    public ProxyServer getServer() {
+        return server;
+    }
+
+    public CerberusDiscordBot getDiscordBot() {
+        return discordBot;
     }
 }

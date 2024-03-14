@@ -9,12 +9,13 @@ import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.requests.GatewayIntent;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.UUID;
 
 public class CerberusDiscordBot extends ListenerAdapter {
 
@@ -64,7 +65,15 @@ public class CerberusDiscordBot extends ListenerAdapter {
         return !bot.getMutualGuilds(user).isEmpty();
     }
 
-    private void createLinkingCommand() {
+    @Nullable
+    public User getUser(@NotNull UUID minecraftId) {
+        if (plugin.getDatabase() == null) return null;
+        Long discordId = plugin.getDatabase().getDiscordSnowflakeByMinecraftUuid(minecraftId);
+        if (discordId == null) return null;
+        return bot.getUserById(discordId);
+    }
+
+    public void createLinkingCommand() {
         bot.getGuilds().forEach(guild -> guild.upsertCommand(
                 "link-minecraft",
                 plugin.getConfig().linkingCommandDescription).queue()
@@ -76,7 +85,7 @@ public class CerberusDiscordBot extends ListenerAdapter {
         bot.getPresence().setPresence(OnlineStatus.ONLINE, Activity.customStatus(status));
     }
 
-    private void sendLinkingMessage() {
+    public void sendLinkingMessage() {
         TextChannel textChannel = bot.getTextChannelById(plugin.getConfig().discordChannelId);
         if (textChannel == null) return;
         List<Message> messageHistory = textChannel.getHistory().retrievePast(1).complete();
