@@ -66,8 +66,9 @@ public class CerberusDiscordBot extends ListenerAdapter {
     }
 
     @Nullable
-    public User getUser(@NotNull UUID minecraftId) {
+    public User getUser(@Nullable UUID minecraftId) {
         if (plugin.getDatabase() == null) return null;
+        if (minecraftId == null) return null;
         Long discordId = plugin.getDatabase().getDiscordSnowflakeByMinecraftUuid(minecraftId);
         if (discordId == null) return null;
         return bot.getUserById(discordId);

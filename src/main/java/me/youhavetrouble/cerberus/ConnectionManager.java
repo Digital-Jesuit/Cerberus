@@ -11,10 +11,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.security.SecureRandom;
-import java.util.Locale;
-import java.util.Optional;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
@@ -140,6 +137,10 @@ public class ConnectionManager {
         } catch (URISyntaxException e) {
             return CompletableFuture.completedFuture(null);
         }
+    }
+
+    public Map<String, UUID> getCachedNames() {
+        return Collections.unmodifiableMap(nameCache.asMap());
     }
 
     public enum ConnectionStatus {
