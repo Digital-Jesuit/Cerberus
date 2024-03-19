@@ -5,11 +5,9 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import com.velocitypowered.api.command.BrigadierCommand;
 import com.velocitypowered.api.command.CommandSource;
-import com.velocitypowered.api.proxy.Player;
 import me.youhavetrouble.cerberus.Cerberus;
 import net.dv8tion.jda.api.entities.User;
-
-import java.util.Optional;
+import java.util.UUID;
 
 public class CerberusCommand {
 
@@ -36,15 +34,9 @@ public class CerberusCommand {
                         .then(BrigadierCommand.requiredArgumentBuilder("player", StringArgumentType.string()))
                         .executes(commandContext -> {
                             String playerName = commandContext.getArgument("player", String.class);
-                            Optional<Player> optionalPlayer = plugin.getServer().getPlayer(playerName);
-                            if (optionalPlayer.isEmpty()) {
-                                // TODO get offline player data from name
-                                commandContext.getSource().sendPlainMessage("Player is offline. Offline players are not yet supported");
-                                return Command.SINGLE_SUCCESS;
-                            }
-                            Player player = optionalPlayer.get();
-
-                            User user = plugin.getDiscordBot().getUser(player.getUniqueId());
+                            if (plugin.getConnectionManager() == null) return Command.SINGLE_SUCCESS;
+                            UUID uuid = plugin.getConnectionManager().getUuidFromName(playerName).getNow(null);
+                            User user = plugin.getDiscordBot().getUser(uuid);
 
                             if (user == null) {
                                 commandContext.getSource().sendPlainMessage("Could not resolve discord user");
@@ -52,10 +44,10 @@ public class CerberusCommand {
                             }
 
                             commandContext.getSource().sendRichMessage(
-                                    "Minecraft name: " + player.getUsername() + "<newline>" +
-                                    "Minecraft ID: " + player.getUniqueId() + "<newline>" +
-                                    "Discord name: " +user.getName() + "<newline>" +
-                                    "Discord ID: " +user.getId()
+                                    "Minecraft name: " + playerName + "<newline>" +
+                                    "Minecraft ID: " + uuid + "<newline>" +
+                                    "Discord name: " + user.getName() + "<newline>" +
+                                    "Discord ID: " + user.getId()
                             );
 
                             return Command.SINGLE_SUCCESS;
