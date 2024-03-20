@@ -22,7 +22,7 @@ public class MysqlDatabase implements Database {
         DriverManager.registerDriver(new Driver());
         HikariConfig hikariConfig = new HikariConfig();
         String jdbcUrl = "jdbc:mysql://" + host + ":" + port + "/" + database;
-        jdbcUrl += "&useSSL="+ssl;
+        jdbcUrl += "?useSSL="+ssl;
         jdbcUrl += "&verifyServerCertificate=" + verifyCert;
         hikariConfig.setJdbcUrl(jdbcUrl);
         hikariConfig.setMaximumPoolSize(10);
