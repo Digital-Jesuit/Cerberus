@@ -21,12 +21,14 @@ public class MysqlDatabase implements Database {
         this.logger = logger;
         DriverManager.registerDriver(new Driver());
         HikariConfig hikariConfig = new HikariConfig();
-        String jdbcUrl = "jdbc:mysql://" + host + ":" + port + "/" + database + "?user=" + user + "&password=" + password;
+        String jdbcUrl = "jdbc:mysql://" + host + ":" + port + "/" + database;
         jdbcUrl += "&useSSL="+ssl;
         jdbcUrl += "&verifyServerCertificate=" + verifyCert;
         hikariConfig.setJdbcUrl(jdbcUrl);
         hikariConfig.setMaximumPoolSize(10);
         hikariConfig.setPoolName("CerberusPool-MySQL");
+        hikariConfig.setUsername(user);
+        hikariConfig.setPassword(password);
         this.dataSource = new HikariDataSource(hikariConfig);
         createTables();
     }
