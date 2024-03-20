@@ -2,16 +2,15 @@ package me.youhavetrouble.cerberus;
 
 import com.velocitypowered.api.proxy.Player;
 import me.youhavetrouble.cerberus.listeners.DiscordBotListener;
-import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.JDABuilder;
-import net.dv8tion.jda.api.OnlineStatus;
+import net.dv8tion.jda.api.*;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.interactions.commands.Command;
+import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions;
+import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.requests.GatewayIntent;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -36,7 +35,7 @@ public class CerberusDiscordBot extends ListenerAdapter {
                 .addEventListeners(new DiscordBotListener(plugin))
                 .build();
         bot.awaitReady();
-        createLinkingCommand();
+        createCommands();
         sendLinkingMessage();
     }
 
@@ -74,11 +73,13 @@ public class CerberusDiscordBot extends ListenerAdapter {
         return bot.getUserById(discordId);
     }
 
-    public void createLinkingCommand() {
-        bot.getGuilds().forEach(guild -> guild.upsertCommand(
-                "link-minecraft",
-                plugin.getConfig().linkingCommandDescription).queue()
-        );
+    public void createCommands() {
+        bot.getGuilds().forEach(guild -> guild.updateCommands().addCommands(
+                Commands.slash("link-minecraft", plugin.getConfig().linkingCommandDescription)
+                        .setGuildOnly(true),
+                Commands.context(Command.Type.USER, "Get connected minecraft account")
+                        .setDefaultPermissions(DefaultMemberPermissions.DISABLED)
+        ).queue());
     }
 
     public void setStatus(String status) {

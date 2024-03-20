@@ -114,7 +114,7 @@ public class Cerberus {
         config = new CerberusConfig(new Toml().read(file));
         if (discordBot == null) return;
         discordBot.setStatus(config.status);
-        discordBot.createLinkingCommand();
+        discordBot.createCommands();
         discordBot.sendLinkingMessage();
     }
 

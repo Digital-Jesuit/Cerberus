@@ -30,3 +30,4 @@ duplicate-discord-id="This discord account is already connected to another accou
 already-connected="Your minecraft account is already connected!"
 connection-embed-title="Connect your minecraft account"
 connection-embed-content="Try to join the server to get the linking code.\n Click the button below to enter it."
+minecraft-account-not-connected="User doesn't have minecraft account connected"

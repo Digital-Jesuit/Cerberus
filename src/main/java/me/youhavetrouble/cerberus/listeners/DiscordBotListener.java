@@ -2,9 +2,12 @@ package me.youhavetrouble.cerberus.listeners;
 
 import me.youhavetrouble.cerberus.Cerberus;
 import me.youhavetrouble.cerberus.ConnectionManager;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.command.UserContextInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.components.text.TextInput;
@@ -105,6 +108,28 @@ public class DiscordBotListener extends ListenerAdapter {
                         interactionHook.editOriginal(plugin.getConfig().duplicateDiscordId).queue();
                 case OTHER_ERROR -> interactionHook.editOriginal(plugin.getConfig().otherErrorDiscord).queue();
             }
+        });
+
+    }
+
+    @Override
+    public void onUserContextInteraction(@NotNull UserContextInteractionEvent event) {
+        Member clickingMember = event.getMember();
+        if (clickingMember == null) return;
+        Guild guild = event.getGuild();
+        if (guild == null) return;
+
+        User target = event.getTarget();
+        if (plugin.getConnectionManager() == null) return;
+        long targetId = target.getIdLong();
+
+        event.deferReply(true).queue(interactionHook -> {
+            UUID uuid = plugin.getConnectionManager().getMinecraftIdFromDiscordId(targetId);
+            if (uuid == null) {
+                interactionHook.editOriginal(plugin.getConfig().minecraftNotConnected).queue();
+                return;
+            }
+            interactionHook.editOriginal("https://namemc.com/profile/%s".formatted(uuid.toString())).queue();
         });
 
     }

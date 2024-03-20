@@ -9,7 +9,7 @@ public class CerberusConfig {
     protected final String botToken, status, databaseType, databaseHost, databaseUser, databasePassword,
             linkingCommandDescription;
     public final String linkingKickReason, otherErrorDiscord, invalidCode, duplicateMinecraftId, duplicateDiscordId,
-            accountConnected, alreadyConnected, connectionEmbedTitle, connectionEmbedContent;
+            accountConnected, alreadyConnected, connectionEmbedTitle, connectionEmbedContent, minecraftNotConnected;
     protected final Long databasePort, discordChannelId;
 
     public final Component otherErrorMinecraft ;
@@ -41,6 +41,7 @@ public class CerberusConfig {
         alreadyConnected = messages.getString("already-connected", "Your minecraft account is already connected!");
         connectionEmbedTitle = messages.getString("connection-embed-title", "Connect your minecraft account");
         connectionEmbedContent = messages.getString("connection-embed-content", "Try to join the server to get the linking code.\n Click the button below to enter it.");
+        minecraftNotConnected = messages.getString("minecraft-account-not-connected", "User doesn't have minecraft account connected");
     }
 
 }

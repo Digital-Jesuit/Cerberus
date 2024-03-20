@@ -143,6 +143,13 @@ public class ConnectionManager {
         return Collections.unmodifiableMap(nameCache.asMap());
     }
 
+    @Nullable
+    public UUID getMinecraftIdFromDiscordId(long snowflake) {
+        if (plugin.getDatabase() == null) return null;
+        return plugin.getDatabase().getMinecraftuuidByDiscordSnowflake(snowflake);
+    }
+
+
     public enum ConnectionStatus {
         SUCCESS,
         INVALID_CODE,
