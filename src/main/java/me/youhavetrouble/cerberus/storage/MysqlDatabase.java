@@ -26,6 +26,7 @@ public class MysqlDatabase implements Database {
         jdbcUrl += "&verifyServerCertificate=" + verifyCert;
         hikariConfig.setJdbcUrl(jdbcUrl);
         hikariConfig.setMaximumPoolSize(10);
+        hikariConfig.setPoolName("CerberusPool-MySQL");
         this.dataSource = new HikariDataSource(hikariConfig);
         createTables();
     }

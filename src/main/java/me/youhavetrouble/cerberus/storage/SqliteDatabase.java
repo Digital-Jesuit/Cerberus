@@ -27,6 +27,7 @@ public class SqliteDatabase implements Database {
         HikariConfig hikariConfig = new HikariConfig();
         hikariConfig.setJdbcUrl("jdbc:sqlite:plugins/cerberus/data.db");
         hikariConfig.setMaximumPoolSize(1); // sqlite is not exactly thread safe
+        hikariConfig.setPoolName("CerberusPool-SQLite");
         this.dataSource = new HikariDataSource(hikariConfig);
         createTables();
     }
