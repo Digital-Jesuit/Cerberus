@@ -74,7 +74,7 @@ public class Cerberus {
                     this.database = new SqliteDatabase(logger);
             }
         } catch (Exception e) {
-            logger.error("Failed to connect to %s database, defaulting to sqlite.".formatted(databaseType));
+            logger.error("Failed to connect to %s database, defaulting to sqlite.".formatted(databaseType), e);
             this.database = new SqliteDatabase(logger);
         }
 
