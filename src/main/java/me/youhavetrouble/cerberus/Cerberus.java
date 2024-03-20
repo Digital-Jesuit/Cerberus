@@ -86,8 +86,7 @@ public class Cerberus {
 
     public boolean canJoin(Player player) {
         UUID uuid = player.getUniqueId();
-        if (!connectionManager.isConnected(uuid)) return false;
-        return discordBot.isPlayerOnCommonDiscordServer(player);
+        return connectionManager.isConnected(uuid);
     }
 
     @Nullable

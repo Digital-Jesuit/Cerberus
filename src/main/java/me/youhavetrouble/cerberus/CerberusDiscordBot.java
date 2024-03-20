@@ -1,6 +1,5 @@
 package me.youhavetrouble.cerberus;
 
-import com.velocitypowered.api.proxy.Player;
 import me.youhavetrouble.cerberus.listeners.DiscordBotListener;
 import net.dv8tion.jda.api.*;
 import net.dv8tion.jda.api.entities.*;
@@ -37,31 +36,6 @@ public class CerberusDiscordBot extends ListenerAdapter {
         bot.awaitReady();
         createCommands();
         sendLinkingMessage();
-    }
-
-    /**
-     * Checks if a player is on the common Discord server.
-     *
-     * @param player The player to check.
-     * @return true if the player is on the common Discord server, false otherwise.
-     */
-    public boolean isPlayerOnCommonDiscordServer(Player player) {
-        if (plugin.getDatabase() == null) return false;
-        Long snowflake = plugin.getDatabase().getDiscordSnowflakeByMinecraftUuid(player.getUniqueId());
-        if (snowflake == null) return false;
-        User user = bot.getUserById(snowflake);
-        return isUserOnCommonDiscordServer(user);
-    }
-
-    /**
-     * Checks if a user is on a common Discord server.
-     *
-     * @param user The user to check.
-     * @return True if the user is on a common Discord server, false otherwise.
-     */
-    public boolean isUserOnCommonDiscordServer(@Nullable User user) {
-        if (user == null) return false;
-        return !bot.getMutualGuilds(user).isEmpty();
     }
 
     @Nullable
