@@ -59,7 +59,7 @@ public class MysqlDatabase implements Database {
                 if (e.getMessage().contains("minecraft_id")) return ConnectionManager.ConnectionStatus.DUPLICATE_MINECRAFT_ID;
                 return ConnectionManager.ConnectionStatus.OTHER_ERROR;
             }
-            logger.error("Failed to save connection!");
+            logger.error("Failed to save connection!", e);
             return ConnectionManager.ConnectionStatus.OTHER_ERROR;
         }
     }
@@ -70,10 +70,12 @@ public class MysqlDatabase implements Database {
             PreparedStatement statement = connection.prepareStatement("select discord_id from connections where minecraft_id = ?;");
             statement.setString(1, minecraftUuid.toString());
             ResultSet result = statement.executeQuery();
+            result.next();
             long id = result.getLong("discord_id");
             if (id == 0) return null;
             return id;
-        } catch (SQLException e) {
+        } catch (SQLException | NullPointerException e) {
+            logger.error("Failed to get player's discord id", e);
             return null;
         }
     }
@@ -84,10 +86,12 @@ public class MysqlDatabase implements Database {
             PreparedStatement statement = connection.prepareStatement("select minecraft_id from connections where discord_id = ?;");
             statement.setLong(1, discordSnowflake);
             ResultSet result = statement.executeQuery();
+            if (!result.next()) return null;
             String stringId = result.getString("minecraft_id");
             if (stringId == null) return null;
             return UUID.fromString(stringId);
         } catch (SQLException|IllegalArgumentException e) {
+            logger.error("Failed to get player's minecraft id", e);
             return null;
         }
     }
