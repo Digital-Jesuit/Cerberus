@@ -11,6 +11,7 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import me.youhavetrouble.cerberus.commands.CerberusCommand;
 import me.youhavetrouble.cerberus.listeners.JoinAttemptListener;
 import me.youhavetrouble.cerberus.storage.Database;
+import me.youhavetrouble.cerberus.storage.MysqlDatabase;
 import me.youhavetrouble.cerberus.storage.SqliteDatabase;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -51,17 +52,32 @@ public class Cerberus {
     public void onProxyInitialization(ProxyInitializeEvent event) throws SQLException {
         reloadPlugin();
         String databaseType = config.databaseType;
-        switch (databaseType) {
-            case "sqlite":
-                this.database = new SqliteDatabase(logger);
-                break;
-            case "mysql":
-                // TODO mysql implementation
-                break;
-            default:
-                logger.error("Failed to recognize database type %s, defaulting to sqlite.".formatted(databaseType));
-                this.database = new SqliteDatabase(logger);
+        try {
+            switch (databaseType) {
+                case "sqlite":
+                    this.database = new SqliteDatabase(logger);
+                    break;
+                case "mysql":
+                    this.database = new MysqlDatabase(
+                            logger,
+                            config.databaseHost,
+                            config.databasePort,
+                            config.database,
+                            config.databaseUser,
+                            config.databasePassword,
+                            config.databaseSsl,
+                            config.databaseVerifyCertificate
+                    );
+                    break;
+                default:
+                    logger.error("Failed to recognize database type %s, defaulting to sqlite.".formatted(databaseType));
+                    this.database = new SqliteDatabase(logger);
+            }
+        } catch (Exception e) {
+            logger.error("Failed to connect to %s database, defaulting to sqlite.".formatted(databaseType));
+            this.database = new SqliteDatabase(logger);
         }
+
         initDiscordBot();
         discordBot.setStatus(config.status);
         this.connectionManager = new ConnectionManager(this);

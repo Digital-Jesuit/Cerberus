@@ -6,11 +6,14 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 
 public class CerberusConfig {
 
-    protected final String botToken, status, databaseType, databaseHost, databaseUser, databasePassword,
+    protected final String botToken, status, databaseType, databaseHost, databaseUser, databasePassword, database,
             linkingCommandDescription;
+
+    protected final boolean databaseSsl, databaseVerifyCertificate;
     public final String linkingKickReason, otherErrorDiscord, invalidCode, duplicateMinecraftId, duplicateDiscordId,
             accountConnected, alreadyConnected, connectionEmbedTitle, connectionEmbedContent, minecraftNotConnected;
-    protected final Long databasePort, discordChannelId;
+    protected final Long  discordChannelId;
+    protected final Integer databasePort;
 
     public final Component otherErrorMinecraft ;
 
@@ -25,7 +28,10 @@ public class CerberusConfig {
         databaseHost = database.getString("host", "localhost");
         databaseUser = database.getString("user", "cerberus");
         databasePassword = database.getString("password", "cerberuspassword");
-        databasePort = database.getLong("port", 3306L);
+        databasePort = Math.toIntExact(database.getLong("port", 3306L));
+        this.database = database.getString("database", "cerberus");
+        databaseSsl = database.getBoolean("ssl", false);
+        databaseVerifyCertificate = database.getBoolean("verify-certificate", false);
 
         Toml messages = config.getTable("Messages");
         String linkingCommandDescription = messages.getString("linking-command-description", "Allows to link discord account to minecraft one");

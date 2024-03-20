@@ -10,6 +10,8 @@ port=3306
 database="cerberus"
 user="cerberususer"
 password="cerberuspassword"
+ssl=false
+verify-certificate=false
 
 [Messages]
 linking-command-description="Allows to link discord account to minecraft one"
