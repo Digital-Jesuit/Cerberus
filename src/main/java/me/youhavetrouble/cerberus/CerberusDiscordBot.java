@@ -1,5 +1,7 @@
 package me.youhavetrouble.cerberus;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import me.youhavetrouble.cerberus.listeners.DiscordBotListener;
 import net.dv8tion.jda.api.*;
 import net.dv8tion.jda.api.entities.*;
@@ -14,11 +16,16 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 public class CerberusDiscordBot extends ListenerAdapter {
 
     private final Cerberus plugin;
     private final JDA bot;
+
+    private final Cache<Long, Byte> interactionCooldown = CacheBuilder.newBuilder()
+            .expireAfterWrite(3, TimeUnit.SECONDS)
+            .build();
 
     protected CerberusDiscordBot(Cerberus plugin) throws InterruptedException {
         this.plugin = plugin;
@@ -82,6 +89,25 @@ public class CerberusDiscordBot extends ListenerAdapter {
             message.editMessageComponents().setActionRow(Button.primary(DiscordBotListener.modal.getId(), "Link your account")).queue();
             return;
         }
+    }
+
+    protected void setInteractionCooldown(long snowflake) {
+        this.interactionCooldown.put(snowflake, (byte) 0);
+    }
+
+    protected boolean isUserOnCooldown(long snowflake) {
+        return this.interactionCooldown.getIfPresent(snowflake) != null;
+    }
+
+    /**
+     * Checks if a user is on cooldown and sets the interaction cooldown if not.
+     * @param snowflake the ID of the user (snowflake) to check cooldown for
+     * @return true if the user is on cooldown, false otherwise
+     */
+    public boolean checkAndSetCooldown(long snowflake) {
+        if (isUserOnCooldown(snowflake)) return true;
+        setInteractionCooldown(snowflake);
+        return false;
     }
 
 }

@@ -11,7 +11,8 @@ public class CerberusConfig {
 
     protected final boolean databaseSsl, databaseVerifyCertificate;
     public final String linkingKickReason, otherErrorDiscord, invalidCode, duplicateMinecraftId, duplicateDiscordId,
-            accountConnected, alreadyConnected, connectionEmbedTitle, connectionEmbedContent, minecraftNotConnected;
+            accountConnected, alreadyConnected, connectionEmbedTitle, connectionEmbedContent, minecraftNotConnected,
+            discordCooldownMessage;
     protected final Long  discordChannelId;
     protected final Integer databasePort;
 
@@ -48,6 +49,7 @@ public class CerberusConfig {
         connectionEmbedTitle = messages.getString("connection-embed-title", "Connect your minecraft account");
         connectionEmbedContent = messages.getString("connection-embed-content", "Try to join the server to get the linking code.\n Click the button below to enter it.");
         minecraftNotConnected = messages.getString("minecraft-account-not-connected", "User doesn't have minecraft account connected");
+        discordCooldownMessage = messages.getString("dicord-interaction-cooldown", "Wait a few seconds before trying again!");
     }
 
 }

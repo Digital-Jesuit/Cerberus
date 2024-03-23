@@ -42,6 +42,10 @@ public class DiscordBotListener extends ListenerAdapter {
         User user = event.getUser();
         if (user.isBot()) return;
         long userId = user.getIdLong();
+        if (plugin.getDiscordBot().checkAndSetCooldown(userId)) {
+            event.deferReply(true).queue(interactionHook -> interactionHook.editOriginal(plugin.getConfig().discordCooldownMessage).queue());
+            return;
+        }
         ConnectionManager connectionManager = plugin.getConnectionManager();
         if (connectionManager == null) {
             event.deferReply(true).queue((interactionHook -> {
@@ -63,6 +67,10 @@ public class DiscordBotListener extends ListenerAdapter {
         User user = event.getUser();
         if (user.isBot()) return;
         long userId = user.getIdLong();
+        if (plugin.getDiscordBot().checkAndSetCooldown(userId)) {
+            event.deferReply(true).queue(interactionHook -> interactionHook.editOriginal(plugin.getConfig().discordCooldownMessage).queue());
+            return;
+        }
         ConnectionManager connectionManager = plugin.getConnectionManager();
         if (connectionManager == null) {
             event.deferReply(true).queue((interactionHook -> {
@@ -83,6 +91,10 @@ public class DiscordBotListener extends ListenerAdapter {
     public void onModalInteraction(@NotNull ModalInteractionEvent event) {
         if (!event.getModalId().equals(modal.getId())) return;
         if (event.getValues().isEmpty()) return;
+        if (plugin.getDiscordBot().checkAndSetCooldown(event.getUser().getIdLong())) {
+            event.deferReply(true).queue(interactionHook -> interactionHook.editOriginal(plugin.getConfig().discordCooldownMessage).queue());
+            return;
+        }
         ConnectionManager connectionManager = plugin.getConnectionManager();
         if (connectionManager == null) {
             event.deferReply(true).queue(interactionHook -> {
@@ -118,7 +130,10 @@ public class DiscordBotListener extends ListenerAdapter {
         if (clickingMember == null) return;
         Guild guild = event.getGuild();
         if (guild == null) return;
-
+        if (plugin.getDiscordBot().checkAndSetCooldown(clickingMember.getIdLong())) {
+            event.deferReply(true).queue(interactionHook -> interactionHook.editOriginal(plugin.getConfig().discordCooldownMessage).queue());
+            return;
+        }
         User target = event.getTarget();
         if (plugin.getConnectionManager() == null) return;
         long targetId = target.getIdLong();
