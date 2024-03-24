@@ -70,7 +70,7 @@ public class MysqlDatabase implements Database {
             PreparedStatement statement = connection.prepareStatement("select discord_id from connections where minecraft_id = ?;");
             statement.setString(1, minecraftUuid.toString());
             ResultSet result = statement.executeQuery();
-            result.next();
+            if (!result.next()) return null;
             long id = result.getLong("discord_id");
             if (id == 0) return null;
             return id;
